@@ -129,6 +129,8 @@ $dataResult = fetchGuests($conn);
             <a href="home.php">Home</a>
             <a href="addGuests.php">Add Guest</a>
             <a href="myGuests.php">Guests List</a>
+            <a href="logs.php">System Logs</a>
+
         </div>
     </div>
 

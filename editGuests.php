@@ -199,6 +199,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($id)) {
             <a href="home.php">Home</a>
             <a href="addGuests.php">Add Guest</a>
             <a href="myGuests.php">Guests List</a>
+            <a href="logs.php">System Logs</a>
+
         </div>
     </div>
     <h1>Update Guest Information</h1>

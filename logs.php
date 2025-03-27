@@ -1,63 +1,27 @@
 <?php
-require_once 'database.php';
+require 'database.php';
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $firstname = $_POST['firstname'] ?? '';
-    $lastname = $_POST['lastname'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $photo = '';
-    $document = '';
-
-    if (!empty($_FILES['photo']['name'])) {
-        $targetDir = "uploads/";
-        $photo = basename($_FILES['photo']['name']);
-        $targetFilePath = $targetDir . $photo;
-        $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
-
-        $allowedImageTypes = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
-        if (in_array(strtolower($fileType), $allowedImageTypes)) {
-            if (move_uploaded_file($_FILES['photo']['tmp_name'], $targetFilePath)) {
-                echo "<script>alert('Photo uploaded successfully.');</script>";
-            } else {
-                echo "<script>alert('Error uploading photo.');</script>";
-            }
-        } else {
-            echo "<script>alert('Invalid image type.');</script>";
-        }
-    }
-
-    if (!empty($_FILES['document']['name'])) {
-        $targetDir = "uploads/";
-        $document = basename($_FILES['document']['name']);
-        $targetFilePath = $targetDir . $document;
-        $fileType = pathinfo($targetFilePath, PATHINFO_EXTENSION);
-
-        $allowedDocumentTypes = ['pdf', 'doc', 'docx', 'ppt', 'pptx', 'txt', 'xls', 'xlsx'];
-        if (in_array(strtolower($fileType), $allowedDocumentTypes)) {
-            if (move_uploaded_file($_FILES['document']['tmp_name'], $targetFilePath)) {
-                echo "<script>alert('Document uploaded successfully.');</script>";
-            } else {
-                echo "<script>alert('Error uploading document.');</script>";
-            }
-        } else {
-            echo "<script>alert('Invalid document type.');</script>";
-        }
-    }
-
-    addGuest($conn, $firstname, $lastname, $email, $photo, $document);
-    header("Location: myGuests.php");
-    exit();
-}
-?>
-
+$logs = fetchLogs($conn);
+ ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Guest</title>
+    <title>Logs</title>
     <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f4f4f9;
@@ -166,18 +130,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin-top: 15px;
         }
 
-        .actions a {
-            text-decoration: none;
-            color: #ff5c8d;
-            font-weight: bold;
-            margin: 0 5px;
-            transition: color 0.3s;
-        }
-
-        .actions a:hover {
-            color: #d14789;
-        }
-
         button {
             background: #d14789;
             color: white;
@@ -194,40 +146,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
     </style>
 </head>
-
 <body>
-    <div class="navbar">
+<div class="navbar">
         <div class="logo">My Hotel</div>
         <div class="menu">
             <a href="home.php">Home</a>
             <a href="addGuests.php">Add Guest</a>
             <a href="myGuests.php">Guests List</a>
             <a href="logs.php">System Logs</a>
-
         </div>
     </div>
-    <h1>Add a New Guest</h1>
-    <div class="container">
-        <form method="POST" action="" enctype="multipart/form-data">
-            <label>First Name</label>
-            <input type="text" name="firstname" required>
-
-            <label>Last Name</label>
-            <input type="text" name="lastname" required>
-
-            <label>Email</label>
-            <input type="email" name="email" required>
-
-            <label>Photo (Image)</label>
-            <input type="file" name="photo" accept=".jpg, .jpeg, .png, .gif, .webp" required>
-
-            <label>Document</label>
-            <input type="file" name="document" accept=".pdf, .doc, .docx, .ppt, .pptx, .txt, .xls, .xlsx">
-
-            <button type="submit">Add Guest</button>
-            <a href="myGuests.php">Cancel</a>
-        </form>
-    </div>
+    <h2>System Logs</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Error Message</th>
+                <th>Error Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if($logs && $logs->num_rows > 0) : ?>
+                <?php while($row = $logs->fetch_assoc()) : ?>
+                    <tr>
+                        <td><?php echo htmlspecialchars($row['id']); ?></td>
+                        <td><?php echo htmlspecialchars($row['error_message']); ?></td>
+                        <td><?php echo htmlspecialchars($row['error_time']); ?></td>
+                    </tr>
+                <?php endwhile; ?>
+            <?php else : ?>
+                <tr>
+                    <td colspan="3">No logs found</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
 </body>
-
 </html>
