@@ -22,7 +22,6 @@ if(!isset($_SESSION['user_id'])) {
             padding: 0;
         }
 
-        /* Navbar */
         .navbar {
             background: #ff99cc;
             padding: 15px 30px;
@@ -50,7 +49,6 @@ if(!isset($_SESSION['user_id'])) {
             background: #e64d99;
         }
 
-        /* Container */
         .container {
             background: #fff0f5;
             padding: 30px;
